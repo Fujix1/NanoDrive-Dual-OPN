@@ -7,6 +7,9 @@
 デジタルボリュームを搭載しているので、フェードアウトや音量のノーマライゼーションができます。
 <br>
 <br>
+<img src="https://user-images.githubusercontent.com/13434151/120786795-9b240880-c569-11eb-9b5f-49e75440f9e1.jpg" width="800">
+<br>
+
 
 ## コンパイルとマイコンへの書き込み
 
@@ -60,3 +63,8 @@ PC から USB で電源供給を行い、さらに音声を PC に入力する�
 ## 既知の問題点
 
 - YM2203 は案外熱を持つ。
+<br><br>
+### 黒バージョン
+
+<img src="https://user-images.githubusercontent.com/13434151/120786824-a1b28000-c569-11eb-9812-0c7c2944c75d.jpg" width="640">
+
