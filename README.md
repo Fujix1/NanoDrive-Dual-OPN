@@ -1,41 +1,44 @@
-# Longan Nano で動く VGM プレーヤー (デュアル YM2203 版)
+# VGM Player powered by Longan Nano で動く VGM プレーヤー (デュアル YM2203 版)
 
-## これはなに?
+## これはなに? / What's this?
 
 何かと話題の RISC-V マイコン Longan Nano (GD32V) を使って VGM ファイルを再生させる試みです。SD カード内のフォルダに保存した vgm 拡張子のファイルを順番に再生します。可能な限り表面実装部品を使ってコンパクトにまとめることを目標にしています。<br>
 このバージョンは YM2203 を 2 個搭載しているので、PC8801 や普通のアーケードタイトルだけでなく、オールドカプコンや YM2203 + PSG を使うタイトル、さらに MSX も単体で鳴らすことができる世界で唯一のアレです。<br>
 デジタルボリュームを搭載しているので、フェードアウトや音量のノーマライゼーションができます。
 <br>
 <br>
+This is a vgm player working with a Longan Nano RISC-V microcomputer. This version supports dual YM2203 OPN chips which is capable to play old Campcom arcades (1943, GnG, Commando etc.), MSX, PC-8801 and PC-9801 musics. VGM data is stored in a SD card.
+<br>
 <img src="https://user-images.githubusercontent.com/13434151/120786795-9b240880-c569-11eb-9b5f-49e75440f9e1.jpg" width="800">
 <br>
 
 
-## コンパイルとマイコンへの書き込み
+## コンパイルとマイコンへの書き込み / Compile and Upload to Longan Nano
 
 Visual Studio Code + PlatformIO IDE を使用します。具体的な使用法については以下を参照してください。<br>
+Use Visual Studio Code and Platform IO IDE.
 
 - https://beta-notes.way-nifty.com/blog/2019/12/post-b8455c.html<br>
 - http://kyoro205.blog.fc2.com/blog-entry-666.html
   <br>
   <br>
 
-## 配線図
+## 配線図 / Schematics
 
 ![schematic](https://user-images.githubusercontent.com/13434151/120784372-f9032100-c566-11eb-9070-ccfb8db83474.png)
 <a href="https://github.com/Fujix1/NanoDrive_YM2151/files/6597524/LonganVGM.pdf">PDF ダウンロード</a>
 
-## 使用部品の説明
+## 使用部品の説明 / Parts
 
-- Longan Nano: マイコン。128KB フラッシュメモリ版（64KB 版では足りません）。IC ソケットに入るように細いピンヘッダで実装のこと。
-- AE-Si5351A: I2C 制御の可変周波数発信 IC を使った秋月電子で売られているモジュール。
-- YM2203: FM 音源チップ。アリエクなどで入手可能。2021 年頃から値上がり傾向。
-- Y3014(B): DAC チップ。アリエクなどで入手可能。Y3014 と Y3014B の 2 種類があるが大きな違いはない。
-- オペアンプ: 4 個入り SOP14、速めのものがオススメ。
-- ミキシング用オペアンプ: なぜかみんな使ってる新日本無線 NJM3414。
-- PT2257: I2C 制御の音量調整 IC 表面実装 SOP8 版。5V 動作。アリエクなどで入手可能。
-- 1000uF: 電源安定用 OS-CON。秋月で入手可能。
-- その他のチップ: 表面実装 1206 サイズ。
+- Longan Nano: マイコン。128KB フラッシュメモリ版（64KB 版では足りません）。IC ソケットに入るように細いピンヘッダで実装のこと。 / 128KB version. Use thin pin headers.
+- AE-Si5351A: I2C 制御の可変周波数発信 IC を使った秋月電子で売られているモジュール。 / I2C controlled variable frequency generator. Available at Akiduki Denshi.
+- YM2203: FM 音源チップ。アリエクなどで入手可能。2021 年頃から値上がり傾向。 / FM + PSG sound generator.
+- Y3014(B): DAC チップ。アリエクなどで入手可能。Y3014 と Y3014B の 2 種類があるが大きな違いはない。 / DAC chip. No bid difference between Y3014 and Y3014B.
+- オペアンプ / OPAMP: 4 個入り SOP14、速めのものがオススメ。 / Use fast one. SOP14.
+- ミキシング用オペアンプ / Mixing OPAMP : なぜかみんな使ってる新日本無線 NJM3414。 / NJM3414 or its equivalent.
+- PT2257: I2C 制御の音量調整 IC 表面実装 SOP8 版。5V 動作。アリエクなどで入手可能。 / I2C controlled digital volume controller. SOP8 version.
+- 1000uF: 電源安定用 OS-CON。秋月で入手可能。 / OS-CON. Avaialble at Akiduki.
+- その他のチップ / Other SOP chips: 表面実装 1206 サイズ。 / 1206 SOP capacitors and resisters.
   <br>
   <br>
 
