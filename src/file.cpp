@@ -7,12 +7,13 @@
 #include "FM/FM.hpp"
 #include "PT2257/PT2257.hpp"
 #include "SI5351/SI5351.hpp"
+#include "keypad/keypad.hpp"
 
-#define BUFFERCAPACITY 1024 * 1  // VGMの読み込み単位（バイト）
-#define MAXLOOP 2                // 次の曲いくループ数
+#define BUFFERCAPACITY 4096  // VGMの読み込み単位（バイト）
+#define MAXLOOP 2            // 次の曲いくループ数
 #define SAMPLE_RATE 44300.0
-#define DELAY_FACTOR 1000 * 1000 / SAMPLE_RATE
-#define SALAMAND_FACTOR SAMPLE_RATE / 46000
+#define ONE_CYCLE 22.685  // 22.67573696145125  // 1000000 / SAMPLE_RATE
+#define SALAMAND_FACTOR 0.9
 
 boolean mount_is_ok = false;
 uint8_t currentDir;     // 今のディレクトリインデックス
@@ -38,12 +39,13 @@ FRESULT fr;
 // VGM状態
 uint32_t vgmLoopOffset;     // ループデータの戻る場所
 boolean vgmLoaded = false;  // VGM データが読み込まれた状態か
-boolean vgmEnd = false;     // 曲終了
 uint8_t vgmLoop = 0;        // 現在のループ回数
 uint32_t startTime;
 uint32_t duration;
+int32_t vgmDelay = 0;
 
 uint32_t compensation = 0;
+uint32_t afterFMCommand = 0;  // FMチップへの命令後は 1 サイクル入れる
 bool salamand = false;
 
 //---------------------------------------------------------------
@@ -231,8 +233,8 @@ uint16_t get_vgm_ui16() { return get_vgm_ui8() + (get_vgm_ui8() << 8); }
 
 //----------------------------------------------------------------------
 // 指定場所の 8 bit 返す
-uint8_t get_vgm_ui8_at(FSIZE_t pos) {
-  FSIZE_t currentPos = fil.fptr;  // 一時退避
+uint8_t get_vgm_ui8_at(uint32_t pos) {
+  uint32_t currentPos = fil.fptr;  // 一時退避
   uint8_t buffer[1];
   UINT br;
 
@@ -245,8 +247,8 @@ uint8_t get_vgm_ui8_at(FSIZE_t pos) {
 
 //----------------------------------------------------------------------
 // 指定場所の 16 bit 返す
-uint16_t get_vgm_ui16_at(FSIZE_t pos) {
-  FSIZE_t currentPos = fil.fptr;  // 一時退避
+uint16_t get_vgm_ui16_at(uint32_t pos) {
+  uint32_t currentPos = fil.fptr;  // 一時退避
   uint8_t buffer[2];
   UINT br;
 
@@ -259,8 +261,8 @@ uint16_t get_vgm_ui16_at(FSIZE_t pos) {
 
 //----------------------------------------------------------------------
 // 指定場所の 32 bit 返す
-uint32_t get_vgm_ui32_at(FSIZE_t pos) {
-  FSIZE_t currentPos = fil.fptr;  // 一時退避
+uint32_t get_vgm_ui32_at(uint32_t pos) {
+  uint32_t currentPos = fil.fptr;  // 一時退避
   uint8_t buffer[4];
   UINT br;
 
@@ -275,7 +277,7 @@ uint32_t get_vgm_ui32_at(FSIZE_t pos) {
 //----------------------------------------------------------------------
 // VGM のポーズ命令
 void pause(uint32_t samples) {
-  startTime = get_timer_value() / 27 + 2;  // startTime = Tick.micros2();
+  /*startTime = get_timer_value() / 27 + 2;  // startTime = Tick.micros2();
                                            // duration = 22.67547 * samples;
   // if (salamand)
   // duration = DELAY_FACTOR * samples * SALAMAND_FACTOR;
@@ -331,9 +333,8 @@ void vgmReady() {
   UINT br;
   String gd3[10];
 
-  vgmLoaded = false;
-  vgmEnd = false;
   vgmLoop = 0;
+  vgmDelay = 0;
 
   // VGM Version
   uint32_t vgm_version = get_vgm_ui32_at(8);
@@ -527,115 +528,156 @@ void vgmReady() {
   // 初期バッファ補充
   fr = f_read(&fil, vgmBuffer1, BUFFERCAPACITY, &bufferSize);
   bufferPos = 0;
-  vgmEnd = false;
   vgmLoaded = true;
   compensation = 0;
+  afterFMCommand = 0;
 }
 
 void vgmProcess() {
-  if ((Tick.micros2() - startTime) <= duration) {
-    return;
-  }
+  while (vgmLoaded) {
+    if (PT2257.process_fadeout()) {  // フェードアウト完了なら次の曲
+      if (numFiles[currentDir] - 1 == currentFile)
+        openDirectory(1);
+      else
+        vgmPlay(1);
+    }
 
-  if (PT2257.process_fadeout()) {  // フェードアウト完了なら次の曲
-    if (numFiles[currentDir] - 1 == currentFile)
-      openDirectory(1);
-    else
-      vgmPlay(1);
-  }
+    uint8_t reg;
+    uint8_t dat;
+    startTime = Tick.micros2();
+    byte command = get_vgm_ui8();
 
-  uint8_t reg;
-  uint8_t dat;
-  byte command = get_vgm_ui8();
+    switch (command) {
+      case 0xA0:  // AY8910, YM2203 PSG, YM2149, YMZ294D
+        dat = get_vgm_ui8();
+        reg = get_vgm_ui8();
+        FM.set_register(dat, reg, CS1);
+        afterFMCommand++;
+        break;
+      case 0x30:  // SN76489 CHIP 2
+        FM.write(get_vgm_ui8(), CS2);
+        // compensation +=  20;
+        // LCD_ShowString(0, 48, (u8 *)("SN76489 2"), GREEN);
+        break;
+      case 0x50:  // SN76489 CHIP 1
+        FM.write(get_vgm_ui8(), CS0);
+        // compensation +=  20;
+        // LCD_ShowString(0, 64, (u8 *)("SN76489 1"), GREEN);
+        break;
+      case 0x54:  // YM2151
+      case 0xa4:
+        reg = get_vgm_ui8();
+        dat = get_vgm_ui8();
+        FM.set_register(reg, dat, CS0);
+        afterFMCommand++;
+        break;
+      case 0x55:  // YM2203_0
+        reg = get_vgm_ui8();
+        dat = get_vgm_ui8();
+        FM.set_register(reg, dat, CS0);
+        afterFMCommand++;
+        break;
+      case 0xA5:  // YM2203_1
+        reg = get_vgm_ui8();
+        dat = get_vgm_ui8();
+        FM.set_register(reg, dat, CS1);
+        afterFMCommand++;
+        break;
+      case 0x5A:  // YM3812
+        reg = get_vgm_ui8();
+        dat = get_vgm_ui8();
+        FM.set_register(reg, dat, CS0);
+        afterFMCommand++;
+        break;
 
-  switch (command) {
-    case 0xA0:  // AY8910, YM2203 PSG, YM2149, YMZ294D
-      dat = get_vgm_ui8();
-      reg = get_vgm_ui8();
-      FM.set_register(dat, reg, CS1);
-      // compensation+=3;
-      break;
-      /*    case 0x30:  // SN76489 CHIP 2
-            FM.write(get_vgm_ui8(), CS2);
-            //compensation +=  20;
-            //LCD_ShowString(0, 48, (u8 *)("SN76489 2"), GREEN);
-            break;
-          case 0x50:  // SN76489 CHIP 1
-            FM.write(get_vgm_ui8(), CS0);
-            //compensation +=  20;
-            //LCD_ShowString(0, 64, (u8 *)("SN76489 1"), GREEN);
-            break;
-          case 0x54: // YM2151
-            reg = get_vgm_ui8();
-            dat = get_vgm_ui8();
-            FM.set_register(reg, dat, CS0);
-            //compensation+=3;
-            break;
-      */
-    case 0x55:  // YM2203_0
-      reg = get_vgm_ui8();
-      dat = get_vgm_ui8();
-      FM.set_register(reg, dat, CS0);
-      break;
-    case 0xA5:  // YM2203_1
-      reg = get_vgm_ui8();
-      dat = get_vgm_ui8();
-      FM.set_register(reg, dat, CS1);
-      break;
-      /*    case 0x5A: // YM3812
-            reg = get_vgm_ui8();
-            dat = get_vgm_ui8();
-            FM.set_register(reg, dat, CS0);
-            //compensation += 2;
-            break;
-      */
-    case 0x61:
-      pause(get_vgm_ui16());
-      break;
-    case 0x62:
-      pause(735);
-      break;
-    case 0x63:
-      pause(882);
-      break;
-    case 0x66:
-      if (!vgmLoopOffset) {  // ループしない曲
-        vgmEnd = true;
-        if (numFiles[currentDir] - 1 == currentFile)
-          openDirectory(1);
-        else
-          vgmPlay(1);
-      } else {
-        vgmLoop++;
-        if (vgmLoop == MAXLOOP) {  // 既定ループ数ならフェードアウトON
-          PT2257.start_fadeout();
+      // Wait n samples, n can range from 0 to 65535 (approx 1.49 seconds)
+      case 0x61:
+        vgmDelay += get_vgm_ui16();
+        break;
+
+      // wait 735 samples (60th of a second)
+      case 0x62:
+        vgmDelay += 735;
+        break;
+
+      // wait 882 samples (50th of a second)
+      case 0x63:
+        vgmDelay += 882;
+        break;
+      case 0x66:
+        if (!vgmLoopOffset) {  // ループしない曲
+
+          if (numFiles[currentDir] - 1 == currentFile)
+            openDirectory(1);
+          else
+            vgmPlay(1);
+        } else {
+          vgmLoop++;
+          if (vgmLoop == MAXLOOP) {  // 既定ループ数ならフェードアウトON
+            PT2257.start_fadeout();
+          }
+          f_lseek(&fil, vgmLoopOffset + 0x1C);  // ループする曲
+          bufferPos = 0;  // ループ開始位置からバッファを読む
+          f_read(&fil, vgmBuffer1, BUFFERCAPACITY, &bufferSize);
         }
-        f_lseek(&fil, vgmLoopOffset + 0x1C);  // ループする曲
-        bufferPos = 0;  // ループ開始位置からバッファを読む
-        f_read(&fil, vgmBuffer1, BUFFERCAPACITY, &bufferSize);
+        break;
+      case 0x70:
+      case 0x71:
+      case 0x72:
+      case 0x73:
+      case 0x74:
+      case 0x75:
+      case 0x76:
+      case 0x77:
+      case 0x78:
+      case 0x79:
+      case 0x7A:
+      case 0x7B:
+      case 0x7C:
+      case 0x7D:
+      case 0x7E:
+      case 0x7F:
+        vgmDelay += (command & 15) + 1;
+        break;
+      default:
+        break;
+    }
+
+    // handle delays
+    if (afterFMCommand > 0) {
+      // ensure adding 1 cycle after sending a FM command.
+      while ((Tick.micros2() - startTime) <= afterFMCommand * ONE_CYCLE) {
       }
-      break;
-    case 0x70:
-    case 0x71:
-    case 0x72:
-    case 0x73:
-    case 0x74:
-    case 0x75:
-    case 0x76:
-    case 0x77:
-    case 0x78:
-    case 0x79:
-    case 0x7A:
-    case 0x7B:
-    case 0x7C:
-    case 0x7D:
-    case 0x7E:
-    case 0x7F:
-      pause((command & 0x0f) + 1);
-      break;
-    default:
-      // Serial.println("unknown command");
-      break;
+      vgmDelay -= afterFMCommand;
+      afterFMCommand = 0;
+    }
+
+    if (vgmDelay > 0) {
+      afterFMCommand = 0;
+      while ((Tick.micros2() - startTime) <= vgmDelay * ONE_CYCLE) {
+        if (vgmDelay > 5) {
+          // handle key input
+          switch (Keypad.checkButton()) {
+            case Keypad.btnSELECT:  // ◯－－－－
+              openDirectory(1);
+              break;
+            case Keypad.btnLEFT:  // －◯－－－
+              openDirectory(-1);
+              break;
+            case Keypad.btnDOWN:  // －－◯－－
+              vgmPlay(+1);
+              break;
+            case Keypad.btnUP:  // －－－◯－
+              vgmPlay(-1);
+              break;
+            case Keypad.btnRIGHT:  // －－－－◯
+              PT2257.start_fadeout();
+              break;
+          }
+        }
+      }
+      vgmDelay = 0;
+    }
   }
 }
 

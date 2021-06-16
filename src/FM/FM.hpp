@@ -16,7 +16,8 @@ class FMChip {
   void set_register(byte addr, byte value, uint8_t chipno);
   void write(byte data, byte chipno);
   void writeRaw(byte data, byte chipno);
- private: 
+
+ private:
   unsigned char psgFrqLowByte = 0;
 };
 
