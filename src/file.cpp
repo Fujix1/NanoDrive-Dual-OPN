@@ -545,6 +545,7 @@ void vgmProcess() {
     uint8_t reg;
     uint8_t dat;
     startTime = Tick.micros2();
+
     byte command = get_vgm_ui8();
 
     switch (command) {
@@ -656,6 +657,7 @@ void vgmProcess() {
       afterFMCommand = 0;
       while ((Tick.micros2() - startTime) <= vgmDelay * ONE_CYCLE) {
         if (vgmDelay > 5) {
+          Display.update();
           // handle key input
           switch (Keypad.checkButton()) {
             case Keypad.btnSELECT:  // ◯－－－－
