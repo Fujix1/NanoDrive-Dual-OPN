@@ -9,11 +9,11 @@
 #include "SI5351/SI5351.hpp"
 #include "keypad/keypad.hpp"
 
-#define BUFFERCAPACITY 4096  // VGMの読み込み単位（バイト）
+#define BUFFERCAPACITY 2048  // VGMの読み込み単位（バイト）
 #define MAXLOOP 2            // 次の曲いくループ数
-#define SAMPLE_RATE 44300.0
-#define ONE_CYCLE 22.685  // 22.67573696145125  // 1000000 / SAMPLE_RATE
-#define SALAMAND_FACTOR 0.9
+#define SAMPLE_RATE 44100.0
+#define ONE_CYCLE 610u
+// 22.67573696145125 * 27 = 612.24  // 1000000 / SAMPLE_RATE
 
 boolean mount_is_ok = false;
 uint8_t currentDir;     // 今のディレクトリインデックス
@@ -40,13 +40,11 @@ FRESULT fr;
 uint32_t vgmLoopOffset;     // ループデータの戻る場所
 boolean vgmLoaded = false;  // VGM データが読み込まれた状態か
 uint8_t vgmLoop = 0;        // 現在のループ回数
-uint32_t startTime;
+uint64_t startTime;
 uint32_t duration;
 int32_t vgmDelay = 0;
 
 uint32_t compensation = 0;
-uint32_t afterFMCommand = 0;  // FMチップへの命令後は 1 サイクル入れる
-bool salamand = false;
 
 //---------------------------------------------------------------
 // 初期化とSDオープン
@@ -272,25 +270,6 @@ uint32_t get_vgm_ui32_at(uint32_t pos) {
 
   return (uint32_t(buffer[0])) + (uint32_t(buffer[1]) << 8) +
          (uint32_t(buffer[2]) << 16) + (uint32_t(buffer[3]) << 24);
-}
-
-//----------------------------------------------------------------------
-// VGM のポーズ命令
-void pause(uint32_t samples) {
-  /*startTime = get_timer_value() / 27 + 2;  // startTime = Tick.micros2();
-                                           // duration = 22.67547 * samples;
-  // if (salamand)
-  // duration = DELAY_FACTOR * samples * SALAMAND_FACTOR;
-  // else
-  duration = DELAY_FACTOR * samples;
-
-  /*  if (compensation >= duration) {
-      compensation -= duration;
-      duration = 0;
-    } else {
-      duration -= compensation;
-    }
-  */
 }
 
 //----------------------------------------------------------------------
@@ -530,7 +509,6 @@ void vgmReady() {
   bufferPos = 0;
   vgmLoaded = true;
   compensation = 0;
-  afterFMCommand = 0;
 }
 
 void vgmProcess() {
@@ -544,8 +522,7 @@ void vgmProcess() {
 
     uint8_t reg;
     uint8_t dat;
-    startTime = Tick.micros2();
-
+    startTime = get_timer_value();
     byte command = get_vgm_ui8();
 
     switch (command) {
@@ -553,7 +530,7 @@ void vgmProcess() {
         dat = get_vgm_ui8();
         reg = get_vgm_ui8();
         FM.set_register(dat, reg, CS1);
-        afterFMCommand++;
+        vgmDelay -= 1;
         break;
       case 0x30:  // SN76489 CHIP 2
         FM.write(get_vgm_ui8(), CS2);
@@ -570,25 +547,25 @@ void vgmProcess() {
         reg = get_vgm_ui8();
         dat = get_vgm_ui8();
         FM.set_register(reg, dat, CS0);
-        afterFMCommand++;
+        vgmDelay -= 1;
         break;
       case 0x55:  // YM2203_0
         reg = get_vgm_ui8();
         dat = get_vgm_ui8();
         FM.set_register(reg, dat, CS0);
-        afterFMCommand++;
+        vgmDelay -= 1;
         break;
       case 0xA5:  // YM2203_1
         reg = get_vgm_ui8();
         dat = get_vgm_ui8();
         FM.set_register(reg, dat, CS1);
-        afterFMCommand++;
+        vgmDelay -= 1;
         break;
       case 0x5A:  // YM3812
         reg = get_vgm_ui8();
         dat = get_vgm_ui8();
         FM.set_register(reg, dat, CS0);
-        afterFMCommand++;
+        vgmDelay -= 1;
         break;
 
       // Wait n samples, n can range from 0 to 65535 (approx 1.49 seconds)
@@ -644,20 +621,11 @@ void vgmProcess() {
         break;
     }
 
-    // handle delays
-    if (afterFMCommand > 0) {
-      // ensure adding 1 cycle after sending a FM command.
-      while ((Tick.micros2() - startTime) <= afterFMCommand * ONE_CYCLE) {
-      }
-      vgmDelay -= afterFMCommand;
-      afterFMCommand = 0;
-    }
-
     if (vgmDelay > 0) {
-      afterFMCommand = 0;
-      while ((Tick.micros2() - startTime) <= vgmDelay * ONE_CYCLE) {
-        if (vgmDelay > 5) {
-          Display.update();
+      bool flag = false;
+      while ((get_timer_value() - startTime) <= vgmDelay * ONE_CYCLE) {
+        if (flag == false && vgmDelay > 5) {
+          flag = true;
           // handle key input
           switch (Keypad.checkButton()) {
             case Keypad.btnSELECT:  // ◯－－－－
@@ -678,6 +646,7 @@ void vgmProcess() {
           }
         }
       }
+      compensation = 0;
       vgmDelay = 0;
     }
   }

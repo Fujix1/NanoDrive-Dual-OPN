@@ -10,9 +10,11 @@
 class TickClass {
  private:
   unsigned long _tick;
+
  public:
   unsigned long micros2();
   unsigned long millis2();
+  void delay_500ns();
   void delay_us(uint32_t);
   void delay_ms(uint32_t);
   void start();

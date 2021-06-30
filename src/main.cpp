@@ -45,9 +45,6 @@ void setup() {
   vgmPlay(0);  // 再生開始
 }
 
-byte lastButton;
-boolean flag = false;
-
 void loop() {
   Display.update();  // LCDの文字表示更新
 
