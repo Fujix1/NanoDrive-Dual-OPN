@@ -166,13 +166,14 @@ void FMChip::set_register(byte addr, byte data, uint8_t chipno = CS0) {
   }
   WR_LOW;  // TWW >= 200ns
   Tick.delay_500ns();
+  Tick.delay_500ns();
   WR_HIGH;
   A0_HIGH;
 
   //---------------------------------------
   // data
 
-  Tick.delay_us(6);  // 6が限界 Darius
+  Tick.delay_us(8);  // 8が限界 ニュージーランドストーリー
 
   // LOW
   GPIO_BC(GPIOC) = GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
@@ -185,10 +186,11 @@ void FMChip::set_register(byte addr, byte data, uint8_t chipno = CS0) {
 
   WR_LOW;
   Tick.delay_500ns();
+  Tick.delay_500ns();
   WR_HIGH;
   CS0_HIGH;
 
-  Tick.delay_us(16);  // 16 が限界  Dragon Slayer
+  Tick.delay_us(22);  // 21 が限界  ニュージーランドストーリー
 }
 
 FMChip FM;

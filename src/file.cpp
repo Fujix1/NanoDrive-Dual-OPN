@@ -1,5 +1,5 @@
 /*
- * ファイルと vgm 処理関係
+ * Open file and process VGM data
  */
 #include "file.hpp"
 
@@ -11,18 +11,17 @@
 
 #define BUFFERCAPACITY 2048  // VGMの読み込み単位（バイト）
 #define MAXLOOP 2            // 次の曲いくループ数
-#define SAMPLE_RATE 44100.0
-#define ONE_CYCLE 610u
-// 22.67573696145125 * 27 = 612.24  // 1000000 / SAMPLE_RATE
+#define ONE_CYCLE 611u
+// 22.67573696145125 * 27 = 612.24  // 1000000 / 44100
 
 boolean mount_is_ok = false;
-uint8_t currentDir;     // 今のディレクトリインデックス
-uint8_t currentFile;    // 今のファイルインデックス
-uint8_t numDirs = 0;    // ルートにあるディレクトリ数
-char **dirs;            // ルートにあるディレクトリの配列
-uint8_t *attenuations;  // 各ディレクトリの減衰量 (デシベル)
-char ***files;          // 各ディレクトリ内の vgm ファイル名配列
-uint8_t *numFiles;      // 各ディレクトリ内の vgm ファイル数
+uint8_t currentDir;                 // 今のディレクトリインデックス
+uint8_t currentFile;                // 今のファイルインデックス
+uint8_t numDirs = 0;                // ルートにあるディレクトリ数
+char **dirs;                        // ルートにあるディレクトリの配列
+uint8_t *attenuations;              // 各ディレクトリの減衰量 (デシベル)
+char ***files;                      // 各ディレクトリ内の vgm ファイル名配列
+uint8_t *numFiles;                  // 各ディレクトリ内の vgm ファイル数
 
 boolean fileOpened = false;          // ファイル開いてるか
 uint8_t vgmBuffer1[BUFFERCAPACITY];  // バッファ
@@ -30,13 +29,13 @@ uint16_t bufferPos = 0;              // バッファ内の位置
 uint16_t filesize = 0;               // ファイルサイズ
 UINT bufferSize = 0;                 // 現在のバッファ容量
 
-// ファイル処理用
+// File handlers
 FATFS fs;
 FIL fil;
 FILINFO fno;
 FRESULT fr;
 
-// VGM状態
+// VGM Status
 uint32_t vgmLoopOffset;     // ループデータの戻る場所
 boolean vgmLoaded = false;  // VGM データが読み込まれた状態か
 uint8_t vgmLoop = 0;        // 現在のループ回数
@@ -47,6 +46,7 @@ int32_t vgmDelay = 0;
 uint32_t compensation = 0;
 
 //---------------------------------------------------------------
+// Init and open SD card
 // 初期化とSDオープン
 // ファイル構造の読み込み
 boolean sd_init() {
@@ -58,6 +58,7 @@ boolean sd_init() {
   currentDir = 0;
   currentFile = 0;
 
+  // Try until SD card is mounted
   // SD マウントするまで試行
   LCD_ShowString(0, 0, (u8 *)("Checking SD card."), WHITE);
   for (i = 0; i < 18; i++) {
@@ -145,9 +146,13 @@ boolean sd_init() {
       // フォルダノーマライズ
       // 以下の名前を含むファイルがあれば全部 att* dB 下げる
       attenuations[i] = 0;
-      fr = f_findfirst(&dir, &fno, dirs[i], "loud");
+      fr = f_findfirst(&dir, &fno, dirs[i], "att2");
       if (fr == FR_OK && fno.fname[0]) {
-        attenuations[i] = 8;
+        attenuations[i] = 2;
+      }
+      fr = f_findfirst(&dir, &fno, dirs[i], "att4");
+      if (fr == FR_OK && fno.fname[0]) {
+        attenuations[i] = 4;
       }
       fr = f_findfirst(&dir, &fno, dirs[i], "att6");
       if (fr == FR_OK && fno.fname[0]) {
@@ -424,8 +429,8 @@ void vgmReady() {
   uint32_t vgm_ym2203_clock = get_vgm_ui32_at(0x44);
   if (vgm_ym2203_clock) {
     switch (vgm_ym2203_clock) {
-      case 1076741824:  // デュアル 1.5MHz
-      case 1075241824:  // デュアル 1.5MHz
+      case 1076741824:  // Dual 1.5MHz
+      case 1075241824:  // Dual 1.5MHz
         SI5351.setFreq(SI5351_1500);
         break;
       case 3000000:  // 3MHz
@@ -440,11 +445,11 @@ void vgmReady() {
         break;
       case 3993600:
       case 4000000:
-      case 1077741824:  // デュアル 4MHz
+      case 1077741824:  // Dual 4MHz
         SI5351.setFreq(SI5351_4000);
         break;
       case 4500000:     // 4.5MHz
-      case 1078241824:  // デュアル 4.5MHz
+      case 1078241824:  // Dual 4.5MHz
         SI5351.setFreq(SI5351_4500);
         break;
       case 1250000:  // 1.25MHz
@@ -533,21 +538,17 @@ void vgmProcess() {
         vgmDelay -= 1;
         break;
       case 0x30:  // SN76489 CHIP 2
-        FM.write(get_vgm_ui8(), CS2);
-        // compensation +=  20;
-        // LCD_ShowString(0, 48, (u8 *)("SN76489 2"), GREEN);
+        //FM.write(get_vgm_ui8(), CS2);
         break;
       case 0x50:  // SN76489 CHIP 1
-        FM.write(get_vgm_ui8(), CS0);
-        // compensation +=  20;
-        // LCD_ShowString(0, 64, (u8 *)("SN76489 1"), GREEN);
+        //FM.write(get_vgm_ui8(), CS0);
         break;
       case 0x54:  // YM2151
       case 0xa4:
         reg = get_vgm_ui8();
         dat = get_vgm_ui8();
-        FM.set_register(reg, dat, CS0);
-        vgmDelay -= 1;
+        //FM.set_register(reg, dat, CS0);
+        //vgmDelay -= 1;
         break;
       case 0x55:  // YM2203_0
         reg = get_vgm_ui8();
@@ -564,8 +565,8 @@ void vgmProcess() {
       case 0x5A:  // YM3812
         reg = get_vgm_ui8();
         dat = get_vgm_ui8();
-        FM.set_register(reg, dat, CS0);
-        vgmDelay -= 1;
+        //FM.set_register(reg, dat, CS0);
+        //vgmDelay -= 1;
         break;
 
       // Wait n samples, n can range from 0 to 65535 (approx 1.49 seconds)
@@ -624,7 +625,7 @@ void vgmProcess() {
     if (vgmDelay > 0) {
       bool flag = false;
       while ((get_timer_value() - startTime) <= vgmDelay * ONE_CYCLE) {
-        if (flag == false && vgmDelay > 5) {
+        if (flag == false && vgmDelay > 3) {
           flag = true;
           // handle key input
           switch (Keypad.checkButton()) {
@@ -718,7 +719,7 @@ void vgmOpen(int d, int f) {
 
     FM.reset();
 
-    Tick.delay_ms(16);
+    Tick.delay_ms(32);
     PT2257.reset(attenuations[d]);
   }
 }
