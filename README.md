@@ -30,6 +30,7 @@ Use Visual Studio Code and Platform IO IDE.
 ## 配線図 / Schematics
 
 **【注】音量の増幅率を決める R6 と R7 が音量小さめの 20kΩ になっていますが、通常は 10kΩ 以下（ヘッドホンによっては 4.7kΩ くらい）をおすすめします。20kΩ はアーケードゲーム（カプコンなど）の音割れを防ぐための設定ですが、現在はフォルダ単位の音量調整ができるので音割れを防ぐことができます。**
+
 ** Note: R6 and R7 are 20kohm but it was originally to avoid clipping in some arcade titles. Use 4.7k - 10k ohm for normal use.**
 
 ![schematic](https://user-images.githubusercontent.com/13434151/120784372-f9032100-c566-11eb-9070-ccfb8db83474.png)
