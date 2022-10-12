@@ -33,9 +33,9 @@ Use Visual Studio Code and Platform IO IDE.
 
 ** Note: R6 and R7 are 20kohm but it was originally to avoid clipping in some arcade titles. Use 4.7k - 10k ohm for normal use.**
 
-![schematic](https://user-images.githubusercontent.com/13434151/120784372-f9032100-c566-11eb-9070-ccfb8db83474.png)
-<a href="https://github.com/Fujix1/NanoDrive_YM2151/files/6597524/LonganVGM.pdf">PDF ダウンロード</a>
 
+![schematic](https://user-images.githubusercontent.com/13434151/195317404-62c582b9-1e1b-45d7-914e-4e40b31b5efd.png)
+<a href="https://github.com/Fujix1/NanoDrive-Dual-OPN/files/9763906/NanoDriverYM2203.pdf">PDF ダウンロード</a>
 
 ## 使用部品の説明 / Parts
 
