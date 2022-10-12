@@ -7,11 +7,15 @@
 デジタルボリュームを搭載しているので、フェードアウトや音量のノーマライゼーションができます。
 <br>
 <br>
-This is a vgm player working with a Longan Nano RISC-V microcomputer. This version supports dual YM2203 OPN chips which is capable to play old Campcom arcades (1943, GnG, Commando etc.), MSX, PC-8801 and PC-9801 musics. VGM data is stored in a SD card.
+This is a vgm player working with a Longan Nano RISC-V microcomputer. This version supports dual YM2203 OPN chips which is capable to play old Campcom arcades (1943, GnG, Commando etc.), MSX, PC-8801 and PC-9801 musics. VGM data is stored in a SD card.<br>
 <br>
-<img src="https://user-images.githubusercontent.com/13434151/120786795-9b240880-c569-11eb-9b5f-49e75440f9e1.jpg" width="800">
+**DIP Version**<br>
+<img src="https://user-images.githubusercontent.com/13434151/195284256-cfec6f33-9b92-4837-a669-27ec8e1c7c0f.jpg" width="800"><br>
 <br>
-
+<br>
+**SOP Version**<br>
+<img src="https://user-images.githubusercontent.com/13434151/120786795-9b240880-c569-11eb-9b5f-49e75440f9e1.jpg" width="800"><br>
+<br>
 
 ## コンパイルとマイコンへの書き込み / Compile and Upload to Longan Nano
 
@@ -25,20 +29,23 @@ Use Visual Studio Code and Platform IO IDE.
 
 ## 配線図 / Schematics
 
+**【注】音量の増幅率を決める R6 と R7 が音量小さめの 20kΩ になっていますが、通常は 10kΩ 以下（ヘッドホンによっては 4.7kΩ くらい）をおすすめします。20kΩ はアーケードゲーム（カプコンなど）の音割れを防ぐための設定ですが、現在はフォルダ単位の音量調整ができるので音割れを防ぐことができます。**
+** Note: R6 and R7 are 20kohm but it was originally to avoid clipping in some arcade titles. Use 4.7k - 10k ohm for normal use.**
+
 ![schematic](https://user-images.githubusercontent.com/13434151/120784372-f9032100-c566-11eb-9070-ccfb8db83474.png)
 <a href="https://github.com/Fujix1/NanoDrive_YM2151/files/6597524/LonganVGM.pdf">PDF ダウンロード</a>
+
 
 ## 使用部品の説明 / Parts
 
 - Longan Nano: マイコン。128KB フラッシュメモリ版（64KB 版では足りません）。IC ソケットに入るように細いピンヘッダで実装のこと。 / 128KB version. Use thin pin headers.
 - AE-Si5351A: I2C 制御の可変周波数発信 IC を使った秋月電子で売られているモジュール。 / I2C controlled variable frequency generator. Available at Akiduki Denshi.
-- YM2203: FM 音源チップ。アリエクなどで入手可能。2021 年頃から値上がり傾向。 / FM + PSG sound generator.
+- YM2203C: FM 音源チップ。アリエクなどで入手可能。2021 年頃から値上がり傾向。 / FM + PSG sound generator.
 - Y3014(B): DAC チップ。アリエクなどで入手可能。Y3014 と Y3014B の 2 種類があるが大きな違いはない。 / DAC chip. No bid difference between Y3014 and Y3014B.
 - オペアンプ / OPAMP: 4 個入り SOP14、速めのものがオススメ。 / Use fast one. SOP14.
 - ミキシング用オペアンプ / Mixing OPAMP : なぜかみんな使ってる新日本無線 NJM3414。 / NJM3414 or its equivalent.
 - PT2257: I2C 制御の音量調整 IC 表面実装 SOP8 版。5V 動作。アリエクなどで入手可能。 / I2C controlled digital volume controller. SOP8 version.
 - 1000uF: 電源安定用 OS-CON。秋月で入手可能。 / OS-CON. Avaialble at Akiduki.
-- その他のチップ / Other SOP chips: 表面実装 1206 サイズ。 / 1206 SOP capacitors and resisters.
   <br>
   <br>
 
@@ -48,8 +55,8 @@ SD カードにディレクトリを作って、その中に VGM フォーマッ
 
 ## フォルダ単位の音量減衰設定
 
-YM2203 はアーケードとパソコンでは音量レベルが全然異なるため、このプログラムではフォルダ単位で音量減衰設定を追加しています。<br>
-各フォルダに「att6」「att8」「att10」「att12」「att14」という名前のファイルを配置するとそれぞれ 6 ～ 14dB 音量を低減できます。例えば、PC-8801 版「YsII」とアーケード版「戦場の狼」を同じくらいの音量にしたいなら、戦場の狼のフォルダを att8 ～ att10 くらいにすればいい感じになります。
+YM2203 はアーケードとパソコンでは音量レベルが全然異なるため、このプログラムではフォルダ単位で音量低減率を指定できます。<br>
+各フォルダに「att4」「att6」「att8」「att10」「att12」「att14」という名前の空ファイルを配置すると、それぞれ 4 ～ 14dB 音量を低減できます。例えば、PC-8801 版「YsII」とアーケード版「戦場の狼」を同じくらいの音量にしたいなら、戦場の狼のフォルダを att8 ～ att10 くらいにすればいい感じになります。
 
 ## ノイズについて
 
