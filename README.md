@@ -4,7 +4,7 @@
 
 ## これはなに? / What's this?
 
-何かと話題の RISC-V マイコン Longan Nano (GD32V) を使って VGM ファイルを再生させる試みです。SD カード内のフォルダに保存した vgm 拡張子のファイルを順番に再生します。<br>
+RISC-V マイコン Longan Nano (GD32V) を使って VGM ファイルを再生します。SD カード内のフォルダに保存した vgm 拡張子のファイルを順番に再生します。<br>
 。初期版は可能な限り表面実装部品を使うものでしたが、より誰でも気軽に製作できるようにスルーホール部品版も制作しました。<br>
 YM2203 を 2 発搭載しているので、オールドカプコン、タイトーなどのアーケードゲーム、PC-8801 や PC-9801 の PC ゲームのほか、AY-3-8910 PSG 単体（MSX など）にも対応します。<br>
 I2C デジタルボリュームを搭載しているので、フェードアウトや音量のノーマライゼーションができます。
@@ -16,8 +16,8 @@ This is a vgm player working with a Longan Nano RISC-V microcomputer. This versi
 <img src="https://user-images.githubusercontent.com/13434151/195284256-cfec6f33-9b92-4837-a669-27ec8e1c7c0f.jpg" width="800"><br>
 <br>
 <br>
-**SOP Version**<br>
-<img src="https://user-images.githubusercontent.com/13434151/120786795-9b240880-c569-11eb-9b5f-49e75440f9e1.jpg" width="800"><br>
+**DIP Version (白基板）**<br>
+<img src="https://user-images.githubusercontent.com/13434151/202901795-4f4dd9eb-9767-4a9e-bcf6-8ced674c2f6d.jpg" width="800"><br>
 <br>
 
 ## コンパイルとマイコンへの書き込み / Compile and Upload to Longan Nano
@@ -100,8 +100,8 @@ PC から USB で電源供給を行い、さらに音声を PC に入力する�
 
 - 一部の vgm ファイルで音が間延びする。
 <br><br>
-### DIP 白バージョン
 
+### SOP Version
 <img src="https://user-images.githubusercontent.com/13434151/120786824-a1b28000-c569-11eb-9812-0c7c2944c75d.jpg" width="640">
-
-
+<br>
+<img src="https://user-images.githubusercontent.com/13434151/120786795-9b240880-c569-11eb-9b5f-49e75440f9e1.jpg" width="640">
