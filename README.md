@@ -4,9 +4,10 @@
 
 ## これはなに? / What's this?
 
-何かと話題の RISC-V マイコン Longan Nano (GD32V) を使って VGM ファイルを再生させる試みです。SD カード内のフォルダに保存した vgm 拡張子のファイルを順番に再生します。可能な限り表面実装部品を使ってコンパクトにまとめることを目標にしています。<br>
-このバージョンは YM2203 を 2 個搭載しているので、PC8801 や普通のアーケードタイトルだけでなく、オールドカプコンや YM2203 + PSG を使うタイトル、さらに MSX も単体で鳴らすことができる世界で唯一のアレです。<br>
-デジタルボリュームを搭載しているので、フェードアウトや音量のノーマライゼーションができます。
+何かと話題の RISC-V マイコン Longan Nano (GD32V) を使って VGM ファイルを再生させる試みです。SD カード内のフォルダに保存した vgm 拡張子のファイルを順番に再生します。<br>
+。初期版は可能な限り表面実装部品を使うものでしたが、より誰でも気軽に製作できるようにスルーホール部品版も制作しました。<br>
+YM2203 を 2 発搭載しているので、オールドカプコン、タイトーなどのアーケードゲーム、PC-8801 や PC-9801 の PC ゲームのほか、AY-3-8910 PSG 単体（MSX など）にも対応します。<br>
+I2C デジタルボリュームを搭載しているので、フェードアウトや音量のノーマライゼーションができます。
 <br>
 <br>
 This is a vgm player working with a Longan Nano RISC-V microcomputer. This version supports dual YM2203 OPN chips which is capable to play old Campcom arcades (1943, GnG, Commando etc.), MSX, PC-8801 and PC-9801 musics. VGM data is stored in a SD card.<br>
@@ -52,23 +53,23 @@ Use Visual Studio Code and Platform IO IDE.
 |     D1                               |     LED                                   |     1       |     5mm LED 3Vくらい。好きな色で                                                                                                |                                      |
 |     R2, R3, R14, R16-R22             |     1K                                    |     10      |     抵抗。よくある6.3mmのもの                                                                                                   |     [R-25102](https://akizukidenshi.com/catalog/g/gR-25102/), [R-16876](https://akizukidenshi.com/catalog/g/gR-16876/)               |
 |     R6 - R9                          |     10K                                   |     4       |     R6とR7は基板上に20Kとありますが、10K以下を使ってください                                                                    |     [R-25103](https://akizukidenshi.com/catalog/g/gR-25103/), [R-16877](https://akizukidenshi.com/catalog/g/gR-16877/)               |
-|     R4, R5                           |     20K                                   |     2       |     抵抗。                                                                                                                      |                                      |
-|     R1, R11                          |     2K                                    |     2       |     抵抗。                                                                                                                      |                                      |
-|     R12                              |     330                                   |     1       |     抵抗。                                                                                                                      |                                      |
-|     R13                              |     620                                   |     1       |     抵抗。                                                                                                                      |                                      |
-|     R15                              |     3.3K                                  |     1       |     抵抗。                                                                                                                      |                                      |
+|     R4, R5                           |     20K                                   |     2       |     抵抗。                                                                                                                      |       同梱                           |
+|     R1, R11                          |     2K                                    |     2       |     抵抗。                                                                                                                      |       同梱                           |
+|     R12                              |     330                                   |     1       |     抵抗。                                                                                                                      |       同梱                           |
+|     R13                              |     620                                   |     1       |     抵抗。                                                                                                                      |       同梱                           |
+|     R15                              |     3.3K                                  |     1       |     抵抗。                                                                                                                      |       同梱                           |
 |     J1                               |     MJ-8435                               |     1       |     3.5mmステレオミニジャック                                                                                                   |     [C-09060](https://akizukidenshi.com/catalog/g/gC-09060/)                          |
-|     FM1, FM2                         |     YM2203C                               |     2       |     FM音源IC                                                                                                                    |                                      |
-|     DAC1, DAC2                       |     YM3014(B)                             |     2       |     DAC IC                                                                                                                      |                                      |
-|     RV1, RV2                         |     ボリューム   10ｋΩＡ                  |     2       |     音量用ボリューム。   ALPS ALPINE製 RK09D117000C                                                                             |     [P-14773](https://akizukidenshi.com/catalog/g/gP-14773/)                          |
+|     FM1, FM2                         |     YM2203C                               |     2       |     FM音源IC                                                                                                                    |    オプションで同梱                                  |
+|     DAC1, DAC2                       |     YM3014(B)                             |     2       |     DAC IC                                                                                                                      |    オプションで同梱                                  |
+|     RV1, RV2                         |     ボリューム   10ｋΩＡ                  |     2       |     音量用ボリューム。   ALPS ALPINE製 RK09D117000C                                                                             |     同梱<br>[P-14773](https://akizukidenshi.com/catalog/g/gP-14773/)                          |
 |                                      |     ボリュームつまみ                      |     2       |     軸6mm。D型シャフトかイモネジ固定タイプ。直径19mm 程度まで                                                                   |     [P-16279](https://akizukidenshi.com/catalog/g/gP-16279/), [P-12202](https://akizukidenshi.com/catalog/g/gP-12202/), [P-00999](https://akizukidenshi.com/catalog/g/gP-00999/)    |
 |     SW1～SW5                         |     タクトスイッチ                        |     5       |     4本足タクトスイッチ。中華製はボタンが固い。軽い操作感なら日本メーカー製                                                     |                                      |
 |     U1                               |     LonganNano マイコン  GD32VF103CBT6    |     1       |     Flash128KB／SRAM 32KB版   【注意】マイコン付属属のピンヘッダは太くてソケットに入りません。細いピンヘッダを使ってください    |     [K-14678](https://akizukidenshi.com/catalog/g/gK-14678)                          |
 |                                      |     細ピンヘッダ 1x40                     |     1       |     マイコン用ピンヘッダ                                                                                                        |     [C-06631](https://akizukidenshi.com/catalog/g/gC06631)                          |
 |                                      |     丸ピンIC用   ソケット 1x40            |     1       |     マイコン用ソケット                                                                                                          |     [P-01591](https://akizukidenshi.com/catalog/g/gP-01591/)                          |
-|     U2                               |     4回路オペアンプ                       |     1       |     速めのオペアンプなら大抵動くはず   LMC6484AIN, TLC274BCN,     LME49740NA, NJM2747D など                                     |     [I-03685](https://akizukidenshi.com/catalog/g/gI-03685/), [I-09117](https://akizukidenshi.com/catalog/g/gI-09117/) など       |
+|     U2                               |     4回路オペアンプ                       |     1       |     速めのオペアンプならOK。LMC6484AIN, TLC274BCN, LME49740NA, NJM2747D など。                                     |     [I-03685](https://akizukidenshi.com/catalog/g/gI-03685/), [I-09117](https://akizukidenshi.com/catalog/g/gI-09117/) など       |
 |     U3                               |     AE-Si5351A                            |     1       |     I2Cクロック生成モジュール                                                                                                   |     [K-10679](https://akizukidenshi.com/catalog/g/gK-10679/)                          |
-|     U5                               |     2回路オペアンプ   NJM3414             |     1       |     ミキシング用オペアンプ。3414以外でもOK                                                                                      |                                      |
+|     U5                               |     2回路オペアンプ   NJM3414             |     1       |     ミキシング用オペアンプ。3414以外でもOK。NJM4580DD、NJM2732Dなどで動作確認済み。                                                                                      |                                      |
 |     U6                               |     PT2257    デジタルボリューム          |     1       |     I2C制御のデジタルボリューム                                                                                                 |     同梱                             |
 |                                      |     ICソケット8P                          |     5       |                                                                                                                                 |     [P-00035](https://akizukidenshi.com/catalog/g/gP-00035/)                          |
 |                                      |     ICソケット14P                         |     1       |                                                                                                                                 |     [P-00028](https://akizukidenshi.com/catalog/g/gP-00028/)                          |
@@ -99,7 +100,7 @@ PC から USB で電源供給を行い、さらに音声を PC に入力する�
 
 - 一部の vgm ファイルで音が間延びする。
 <br><br>
-### 黒バージョン
+### SOP 黒バージョン
 
 <img src="https://user-images.githubusercontent.com/13434151/120786824-a1b28000-c569-11eb-9812-0c7c2944c75d.jpg" width="640">
 
