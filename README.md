@@ -12,7 +12,7 @@ I2C デジタルボリュームを搭載しているので、フェードアウ�
 <br>
 This is a vgm player working with a Longan Nano RISC-V microcomputer. This version supports dual YM2203 OPN chips which is capable to play old Campcom arcades (1943, GnG, Commando etc.), MSX, PC-8801 and PC-9801 musics. VGM data is stored in a SD card.<br>
 <br>
-**DIP Version**<br>
+**DIP Version (黒基板）**<br>
 <img src="https://user-images.githubusercontent.com/13434151/195284256-cfec6f33-9b92-4837-a669-27ec8e1c7c0f.jpg" width="800"><br>
 <br>
 <br>
@@ -100,7 +100,8 @@ PC から USB で電源供給を行い、さらに音声を PC に入力する�
 
 - 一部の vgm ファイルで音が間延びする。
 <br><br>
-### SOP 黒バージョン
+### DIP 白バージョン
 
 <img src="https://user-images.githubusercontent.com/13434151/120786824-a1b28000-c569-11eb-9812-0c7c2944c75d.jpg" width="640">
+
 
