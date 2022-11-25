@@ -14,8 +14,8 @@ extern "C" {
 
 #define A0 PB5
 #define WR PB4
-#define CS0_PIN PA12
-#define CS1_PIN PA11
+#define CS0_PIN PA11
+#define CS1_PIN PA12
 #define IC PA8
 
 //#define CS2_PIN PB5
@@ -27,10 +27,10 @@ extern "C" {
 #define IC_HIGH (GPIO_BOP(GPIOA) = GPIO_PIN_8)
 #define IC_LOW (GPIO_BC(GPIOA) = GPIO_PIN_8)
 
-#define CS0_HIGH (GPIO_BOP(GPIOA) = GPIO_PIN_12)  // HIGH
-#define CS0_LOW (GPIO_BC(GPIOA) = GPIO_PIN_12)    // LOW
-#define CS1_HIGH (GPIO_BOP(GPIOA) = GPIO_PIN_11)  // HIGH
-#define CS1_LOW (GPIO_BC(GPIOA) = GPIO_PIN_11)    // LOW
+#define CS0_HIGH (GPIO_BOP(GPIOA) = GPIO_PIN_11)  // HIGH
+#define CS0_LOW (GPIO_BC(GPIOA) = GPIO_PIN_11)    // LOW
+#define CS1_HIGH (GPIO_BOP(GPIOA) = GPIO_PIN_12)  // HIGH
+#define CS1_LOW (GPIO_BC(GPIOA) = GPIO_PIN_12)    // LOW
 //#define CS2_HIGH (GPIO_BOP(GPIOB) = GPIO_PIN_5)  // HIGH
 //#define CS2_LOW  (GPIO_BC(GPIOB)  = GPIO_PIN_5)  // LOW
 
