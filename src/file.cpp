@@ -11,7 +11,7 @@
 
 #define BUFFERCAPACITY 2048  // VGMの読み込み単位（バイト）
 #define MAXLOOP 2            // 次の曲いくループ数
-#define ONE_CYCLE 612u       // ソーサリアンで調整
+#define ONE_CYCLE 606u       // 速度決定（少ないほど速い）
                              // 22.67573696145125 * 27 = 612.24  // 1000000 / 44100
 
 boolean mount_is_ok = false;
