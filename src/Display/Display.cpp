@@ -60,7 +60,8 @@ void Displaycls::set3(String text) {
   LCD_ShowString(0, 48, (u8 *)(text.c_str()), DISPLAY_SET3COLOR);
 }
 
-void Displaycls::update() {
+boolean Displaycls::update() {
+  boolean updated = false;
   uint32_t now = Tick.millis2();
   unsigned int newPos2;
 
@@ -74,10 +75,13 @@ void Displaycls::update() {
         if ( pos2 == len2 ) {
           pos2 = 0;
           startTime2 = Tick.millis2();
+          updated = true;
         }
       }
     }
   }
+
+  return updated;
 }
 
 Displaycls Display;

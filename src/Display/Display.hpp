@@ -16,7 +16,7 @@ class Displaycls {
  public:
   Displaycls();
 
-  void update();
+  boolean update();
 
   void set1(String text);
   void set2(String text);

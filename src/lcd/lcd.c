@@ -1,6 +1,6 @@
 #include "lcd/lcd.h"
 #include "lcd/oledfont.h"
-#include "lcd/bmp.h"
+//#include "lcd/bmp.h"
 u16 BACK_COLOR;   //Background color
 
 
@@ -364,7 +364,7 @@ void LCD_Clear(u16 Color)
 ******************************************************************************/
 void LCD_ShowChinese(u16 x,u16 y,u8 index,u8 size,u16 color)	
 {  
-	u8 i,j;
+	/*u8 i,j;
 	u8 *temp,size1;
 	if(size==16){temp=Hzk16;}//选择字号
 	if(size==32){temp=Hzk32;}
@@ -386,6 +386,7 @@ void LCD_ShowChinese(u16 x,u16 y,u8 index,u8 size,u16 color)
 		}
 		temp++;
 	 }
+	 */
 }
 
 
@@ -666,11 +667,13 @@ void LCD_ShowPicture(u16 x1,u16 y1,u16 x2,u16 y2)
 
 void LCD_ShowLogo(void)
 {
+	/*
 	int i;
 	LCD_Address_Set(0,0,159,75);
 	for(i=0;i<25600;i++)
 	{
 		LCD_WR_DATA8(logo_bmp[i]);
-	}			
+	}
+	*/
 }
 
