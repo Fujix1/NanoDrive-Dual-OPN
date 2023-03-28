@@ -30,6 +30,10 @@ Use Visual Studio Code and Platform IO IDE.
   <br>
   <br>
 
+## 基板 / PCB for KiCad7
+
+https://github.com/Fujix1/NanoDrive-Dual-OPN_PCB
+
 ## 配線図 / Schematics
 
 **【注】音量の増幅率を決める R6 と R7 が音量小さめの 20kΩ になっていますが、通常は 10kΩ 以下（ヘッドホンによっては 4.7kΩ くらい）をおすすめします。20kΩ はアーケードゲーム（カプコンなど）の音割れを防ぐための設定ですが、現在はフォルダ単位の音量調整ができるので音割れを防ぐことができます。**
