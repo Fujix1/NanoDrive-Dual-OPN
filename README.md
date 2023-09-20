@@ -109,3 +109,6 @@ PC から USB で電源供給を行い、さらに音声を PC に入力する�
 <img src="https://user-images.githubusercontent.com/13434151/120786824-a1b28000-c569-11eb-9812-0c7c2944c75d.jpg" width="640">
 <br>
 <img src="https://user-images.githubusercontent.com/13434151/120786795-9b240880-c569-11eb-9b5f-49e75440f9e1.jpg" width="640">
+
+### GD32 DFU Tool
+https://github.com/SeeedDocument/GD32VF103/blob/master/res/GD32_MCU_Dfu_Tool_V3.8.1.5784_1.rar
