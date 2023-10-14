@@ -12,13 +12,9 @@ I2C デジタルボリュームを搭載しているので、フェードアウ�
 <br>
 This is a vgm player working with a Longan Nano RISC-V microcomputer. This version supports dual YM2203 OPN chips which is capable to play old Campcom arcades (1943, GnG, Commando etc.), MSX, PC-8801 and PC-9801 musics. VGM data is stored in a SD card.<br>
 <br>
-**DIP Version (黒基板）**<br>
-<img src="https://user-images.githubusercontent.com/13434151/195284256-cfec6f33-9b92-4837-a669-27ec8e1c7c0f.jpg" width="800"><br>
-<br>
-<br>
-**DIP Version (白基板）**<br>
-<img src="https://user-images.githubusercontent.com/13434151/202901795-4f4dd9eb-9767-4a9e-bcf6-8ced674c2f6d.jpg" width="800"><br>
-<br>
+**DIP Version (release 1.21)**<br>
+<img src="https://github.com/Fujix1/NanoDrive-Dual-OPN/assets/13434151/3f1da835-5f18-4ec3-a513-0341ec99999c" width="800"><br>
+
 
 ## コンパイルとマイコンへの書き込み / Compile and Upload to Longan Nano
 
@@ -36,10 +32,10 @@ https://github.com/Fujix1/NanoDrive-Dual-OPN_PCB
 
 ## 配線図 / Schematics
 
-**【注】音量の増幅率を決める R6 と R7 が音量小さめの 20kΩ になっていますが、通常は 10kΩ 以下（ヘッドホンによっては 4.7kΩ くらい）をおすすめします。20kΩ はアーケードゲーム（カプコンなど）の音割れを防ぐための設定ですが、現在はフォルダ単位の音量調整ができるので音割れを防ぐことができます。**
+**【注】音量の増幅率を決める R6 と R7 が音量小さめの 20kΩ になっていますが、通常は 15kΩ にしてください。**
 
 
-** Note: R6 and R7 are 20kohm but it was originally to avoid clipping in some arcade titles. Use 4.7k - 10k ohm for normal use.**
+** Note: R6 and R7 are 20kohm but it was originally to avoid clipping in some arcade titles. Use 15k ohm usually.**
 
 
 ![schematic](https://user-images.githubusercontent.com/13434151/195317404-62c582b9-1e1b-45d7-914e-4e40b31b5efd.png)
@@ -104,6 +100,15 @@ PC から USB で電源供給を行い、さらに音声を PC に入力する�
 
 - 一部の vgm ファイルで音が間延びする。
 <br><br>
+
+### Old DIP Version (Release 1.1)
+**DIP Version (黒基板）**<br>
+<img src="https://user-images.githubusercontent.com/13434151/195284256-cfec6f33-9b92-4837-a669-27ec8e1c7c0f.jpg" width="800"><br>
+<br>
+<br>
+**DIP Version (白基板）**<br>
+<img src="https://user-images.githubusercontent.com/13434151/202901795-4f4dd9eb-9767-4a9e-bcf6-8ced674c2f6d.jpg" width="800"><br>
+<br>
 
 ### SOP Version
 <img src="https://user-images.githubusercontent.com/13434151/120786824-a1b28000-c569-11eb-9812-0c7c2944c75d.jpg" width="640">
