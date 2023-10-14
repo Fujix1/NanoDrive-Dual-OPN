@@ -37,9 +37,9 @@ https://github.com/Fujix1/NanoDrive-Dual-OPN_PCB
 
 ** Note: R6 and R7 are 20kohm but it was originally to avoid clipping in some arcade titles. Use 15k ohm usually.**
 
+![schematic](https://github.com/Fujix1/NanoDrive-Dual-OPN/assets/13434151/e8bde6fc-cf50-4615-a771-cecad57921ed)
 
-![schematic](https://user-images.githubusercontent.com/13434151/195317404-62c582b9-1e1b-45d7-914e-4e40b31b5efd.png)
-<a href="https://github.com/Fujix1/NanoDrive-Dual-OPN/files/9763906/NanoDriverYM2203.pdf">PDF ダウンロード</a>
+
 
 ## 使用部品 / Parts
 
