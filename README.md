@@ -17,7 +17,7 @@ This is a vgm player working with a Longan Nano RISC-V microcomputer. This versi
 
 ## PDF マニュアル (Release 1.21)
 
-[NanoDriveYM2203_r121.pdf](https://github.com/Fujix1/NanoDrive-Dual-OPN/files/12903515/NanoDriveYM2203_r121.pdf)
+[NanoDriveYM2203_r121.pdf](https://github.com/Fujix1/NanoDrive-Dual-OPN/files/13040061/NanoDriveYM2203.pdf)
 
 
 ## コンパイルとマイコンへの書き込み / Compile and Upload to Longan Nano
